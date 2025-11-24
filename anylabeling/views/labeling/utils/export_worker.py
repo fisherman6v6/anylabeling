@@ -32,6 +32,7 @@ class ExportWorker(QRunnable):
         test_ratio=0.1,
         recursive=False,
         use_random_names=False,
+        keep_polygons=False,
     ):
         """Initialize the export worker.
 
@@ -58,6 +59,7 @@ class ExportWorker(QRunnable):
         self.recursive = recursive
         self.use_random_names = use_random_names
         self.running = False
+        self.keep_polygons = keep_polygons
 
     def _create_split_dirs(self):
         """Create directories for data splits."""
@@ -250,6 +252,7 @@ class ExportWorker(QRunnable):
                     image_width,
                     label_map,
                     output_path,
+                    self.keep_polygons,
                 )
 
                 # Copy image file

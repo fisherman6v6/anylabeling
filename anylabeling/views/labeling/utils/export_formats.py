@@ -14,7 +14,7 @@ class FormatExporter:
 
     @staticmethod
     def export_to_yolo(
-        shapes, image_height, image_width, label_map=None, output_path=None
+        shapes, image_height, image_width, label_map=None, output_path=None, keep_polygons=False
     ):
         """Export annotations to YOLO format.
 
@@ -55,17 +55,21 @@ class FormatExporter:
                 height = abs(y2 - y1) / image_height
                 results.append(f"{class_idx} {x_center} {y_center} {width} {height}")
             elif shape["shape_type"] == "polygon":
-                # For polygons, convert to bbox firs
-                x_coords = [p[0] for p in points]
-                y_coords = [p[1] for p in points]
-                x_min, x_max = min(x_coords), max(x_coords)
-                y_min, y_max = min(y_coords), max(y_coords)
-
-                x_center = (x_min + x_max) / (2 * image_width)
-                y_center = (y_min + y_max) / (2 * image_height)
-                width = (x_max - x_min) / image_width
-                height = (y_max - y_min) / image_height
-                results.append(f"{class_idx} {x_center} {y_center} {width} {height}")
+                if (keep_polygons):
+                    # keep polygon points
+                    label_line = f'{class_idx} ' + ' '.join(f'{x / image_width} {y / image_height} ' for x, y in points)
+                    results.append(label_line)
+                else:
+                    # convert to bbox
+                    x_coords = [p[0] for p in points]
+                    y_coords = [p[1] for p in points]
+                    x_min, x_max = min(x_coords), max(x_coords)
+                    y_min, y_max = min(y_coords), max(y_coords)
+                    x_center = (x_min + x_max) / (2 * image_width)
+                    y_center = (y_min + y_max) / (2 * image_height)
+                    width = (x_max - x_min) / image_width
+                    height = (y_max - y_min) / image_height
+                    results.append(f"{class_idx} {x_center} {y_center} {width} {height}")
 
         result_text = "\n".join(results)
         if output_path:

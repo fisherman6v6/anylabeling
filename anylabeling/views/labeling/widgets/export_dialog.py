@@ -108,6 +108,10 @@ class ExportDialog(QDialog):
         export_options_layout = QVBoxLayout()
         export_options_group.setLayout(export_options_layout)
 
+        self.keep_pologons_check = QCheckBox(self.tr("Keep polygons for formats that support them"))
+        self.keep_pologons_check.setChecked(False)
+        export_options_layout.addWidget(self.keep_pologons_check)
+
         # Random names option
         self.random_names_check = QCheckBox(
             self.tr("Use random names (UUID4) for exported items")
@@ -381,6 +385,7 @@ class ExportDialog(QDialog):
         test_ratio = self.test_spin.value() / 100.0
         recursive = self.recursive_check.isChecked()
         use_random_names = self.random_names_check.isChecked()
+        keep_polygons = self.keep_pologons_check.isChecked()
 
         # Create and start export worker
         self.export_worker = ExportWorker(
@@ -393,6 +398,7 @@ class ExportDialog(QDialog):
             test_ratio,
             recursive,
             use_random_names,
+            keep_polygons
         )
 
         # Connect worker signals
