@@ -57,8 +57,11 @@ class FormatExporter:
             elif shape["shape_type"] == "polygon":
                 if (keep_polygons):
                     # keep polygon points
-                    label_line = f'{class_idx} ' + ' '.join(f'{x / image_width} {y / image_height} ' for x, y in points)
-                    results.append(label_line)
+                    width = image_width
+                    height = image_height
+                    line = f'{class_idx} ' 
+                    line += ' '.join(f'{x / width} {y / height} ' for x, y in points)
+                    results.append(line)
                 else:
                     # convert to bbox
                     x_coords = [p[0] for p in points]
